@@ -1,0 +1,47 @@
+global class account_SendBirthdayEmailBatch  Implements Database.Batchable <sObject> {
+     global Database.queryLocator start(Database.BatchableContext bc) {
+        Date tody = system.today();
+        String SOQL = 'SELECT Id, Name,PersonBirthdate,Prospect_Status__pc, PersonEmail FROM Account WHERE DAY_IN_MONTH(PersonBirthdate) = ' + 
+                      tody.day() +  ' AND CALENDAR_MONTH(PersonBirthdate) = ' + tody.month();
+        return Database.getQueryLocator(SOQL);
+     }
+    global void execute(Database.BatchableContext bc, List<Account> Scope) {
+
+try{
+           system.debug('@@@@scope'+Scope);
+            EmailTemplate template =  [SELECT Id,name,HtmlValue,Body,Subject FROM EmailTemplate where name='abc'];
+           system.debug('@@@@@@@@@@template'+template);
+            for(Account op:scope) { 
+                if( template !=null&& op.PersonEmail!=null && op.Prospect_Status__pc =='Hired' && Template.name=='abc'){   
+                    system.debug('Enter');
+                        List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
+                        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+                        System.debug('inside pro hired');
+                        List<String> sendTo = new List<String>();
+                        system.debug('sentto'+sendTo);
+                        sendTo.add(op.PersonEmail);
+                        mail.setToAddresses(sendTo);
+                        system.debug('sentto'+sendTo);
+                        mail.setSubject(template.subject);
+                        //mail.setHtmlBody(template.body);
+                        mail.setHtmlBody(template.HtmlValue);
+                        mails.add(mail);
+                        Messaging.sendEmail(mails);
+                        system.debug('list Single email'+mails);
+                } 
+                 else{
+                    system.debug('no mail send');
+                }    
+            }      
+    } 
+        catch(exception e){
+            system.debug('####get line'+e.getLineNumber());
+            system.debug('####get mess'+e.getMessage());
+        }
+    }
+    global void finish(Database.BatchableContext bc) {
+        system.debug('Finish done');
+    }
+
+
+}

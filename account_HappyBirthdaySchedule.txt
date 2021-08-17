@@ -1,0 +1,6 @@
+global class account_HappyBirthdaySchedule  implements system.Schedulable{
+   global void execute(SchedulableContext sc) {
+        account_SendBirthdayEmailBatch b = new account_SendBirthdayEmailBatch();
+        Database.executeBatch(b);
+   }
+}

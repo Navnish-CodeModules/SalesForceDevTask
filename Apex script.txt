@@ -1,0 +1,195 @@
+q1-Create 20 new Accounts Records in salesforce with atleast 5 fields filled.
+------------------------------------------------------------------------------
+ans-
+public class Create20RecordAccount {
+    public void CreateRecordMethod()
+    {
+        LIST<Account> accList = new LIST<Account>();
+        for(Integer i =0 ;i<20;i++)
+        {
+        Account Obj = new Account();
+                obj.Name = 'createAccount'+i;
+                accList.add(obj);
+        }
+        insert accList;
+    }
+
+}
+------------
+q-2 Create 10 Contacts with diferent Account(LookUp) values(Relationship with no same 2 accounts) in them.
+
+--------------------------------------------
+List<Account> accList= new List<Account>();
+accList = [SELECT Id,Name FROM Account LIMIT 20];
+List<Contact> conList=new List<Contact>();
+integer j =0;
+for(integer i=1;i<10;i++){
+j=j+1;
+Contact con=new Contact();
+con.LastName= accList.get(j).Name;
+con.AccountId=accList.get(j).Id;
+conList.add(con);
+} Insert conList;
+
+--------------
+q-3 Create 20 Opportunity with Closed Date, Status and Opportunity Name
+-----------------------------------------------------------------------
+list<opportunity> opp1=new list<opportunity>();
+for(integer i=21;i<41;i++){
+Opportunity opp = new Opportunity();
+opp.Name=’Name’+i;
+opp.closeDate=system.today();
+opp.DeliveryInstallationStatus__c= ‘yet to begin’;
+opp.StageName=’Qualification’+i;
+opp1.add(opp);
+} insert opp1;
+
+-------------------------
+q-4-Create 10 Products with different Product Names, Description & Family 
+-------------------------------------------------------------------------
+list<Product2> pro1=new list<Product2>();
+for(integer i=0;i<10;i++){
+Product2 pro = new Product2();
+pro.Name=’Name’+i;
+pro.Description=’Description’;
+pro.Family= ‘None’;
+pro1.add(pro);
+} insert pro1;
+
+-----------------------
+q-5 Delete all contacts belonging to Accounts Name FIELD having ‘A’ in them
+-----------------------------------------------------------------------
+list<Contact>ContactList = [SELECT Id FROM Contact WHERE Account.Name like ‘%a%’];
+delete Contactlist;
+
+---------------------
+q-6 Delete all the Opportunities with Closed Date in past(<Today)
+-----------------------------------------------------------------------
+list<opportunity>oppList = [SELECT Id FROM opportunity WHERE CloseDate<Today];
+delete opplist;
+
+---------------------
+q-7 Update all Opportunity with future Closed Date by Opportunity Name=Opportunity Name + ‘F’
+---------------------------------------------------------------------
+
+LIST<opportunity> oppList=[SELECT Name,CloseDate FROM Opportunity WHERE CloseDate>TODAY];
+LIST<opportunity> oppList1=new LIST<opportunity>();
+for(Opportunity opp:oppList){
+opp.Name=opp.Name+’F’;
+oppList1.add(opp);
+system.debug(‘++++++++++++++’+opp);
+}
+update oppList;
+
+---------------------
+q-8 Update all Opportunity with future Closed Date by Opportunity Name=Opportunity Name + ‘F’
+------------------------------------------------------------------------
+public with sharing class WelcomeClass {
+public void test(){
+system.debug(‘Welcome to sales force’); 
+}
+}
+
+--------------------
+q-9 Display the login salesforce user details 'Name', 'Number' & 'EmailId'
+---------------------------------------------------------------------
+user u = [Select MobilePhone,Name, Email from user where id =: UserInfo.getUserId() ];
+system.debug(u.MobilePhone+' '+u.Name+' '+u.Email);
+
+-------------------
+q-10 Print the Account Names in Alphabetical ascending order
+-------------------------------------------------------------------
+Account<Account> acc = [SELECT Name FROM Account ORDER BY Name ASC ] ;
+for(integer i=0;i<acc.size();i++){
+Account a=acc[i];
+system.debug(‘+++++++++++++’+a.Name);
+
+}
+
+------------------
+q-11 Print the all the contact First name & last name first alphabet in Capital letter. Ex: Contact>Fname’Sachin’ & LName>’arora’ Print => Sachin Arora
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ans-
+list<contact> conlist = [SELECT FirstName,LastName FROM Contact WHERE FirstName!=Null ];
+for(Contact con : conlist){
+String fName=con.FirstName.substring(0,1).capitalize();
+fName+=con.FirstName.substring(1,con.FirstName.length());
+String lName=con.LastName.substring(0,1).capitalize();
+lName+=con.LastName.substring(1,con.LastName.length());
+system.debug(‘+++++++++++’ + fName + ‘++++++++++’ + lName);
+}
+
+---------------------------
+q-12 Print the all the contact First name & last name first alphabet in Capital letter. Ex: Contact>Fname’Sachin’ & LName>’arora’ Print => Sachin Arora
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+list<contact> conlist = [SELECT FirstName,LastName FROM Contact WHERE FirstName!=Null ];
+for(Contact con : conlist){
+String fName=con.FirstName.substring(0,1).capitalize();
+fName+=con.FirstName.substring(1,con.FirstName.length());
+String lName=con.LastName.substring(0,1).capitalize();
+lName+=con.LastName.substring(1,con.LastName.length());
+system.debug(‘+++++++++++’ + fName + ‘++++++++++’ + lName);
+
+}
+-------------------------
+q-13 Print the Account Name in reverse order Ex: Name=’Company’ => ‘ynapmoC’
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+List<Account> AccountList = [select Name from Account limit 1];
+List<string> reverseList = new List<string>();
+String nameToBeReversed= ” ;
+for(Account acc: AccountList){
+String test = acc.Name;
+System.debug(‘account name++++++++++++’+acc.Name);
+for (integer i = test.length(); i > =0; –i) {
+if(test.substring(i).length() >1){
+system.debug(test.substring(i).substring(0,1));
+nameToBeReversed+=test.substring(i).substring(0,1);
+}
+else
+{
+nameToBeReversed+=test.substring(i); }
+}
+} system.debug(nameToBeReversed);
+
+----------------------
+q-14 Print any Integer number in reverse order. Ex: 789234 => 43298
+---------------------------------------------------------------------------------------------------------------------------------------------------
+integer n = 12345, reverse = 0;
+while( n != 0 ){
+reverse = reverse * 10;
+reverse = reverse + math.mod(n,10);
+n = n/10;
+}
+n = reverse;
+system.debug(‘Reverse of entered number is ‘+ n);
+
+---------------------
+q-15 Find all the Products having Description field containing ‘a’ in it
+------------------------------------------------------------------------------------------------------------------------------------------------
+List<Product2>productList=[select Name,Description from Product2 WHERE Description like ‘%a%’];
+for(Product2 pro:ProductList){
+string test = pro.Name;
+system.debug(‘product Name++++++’+test);
+}
+
+-----------------------
+q-16 Create New Price book ‘Algo Pricebook’ and 10 Products with Prices in the Pricebook
+----------------------------------------------------------------------------------------------------------------------------------------------
+Pricebook2 customPB = new Pricebook2(name =’AlgoworksTest’,isActive=true);
+insert customPB;
+List<Product2> prod = new list<Product2>();
+for(integer i=0;i<10;i++){
+Product2 pro = new Product2(name = ‘test’+string.valueOF(i));
+prod.add(pro);
+}
+insert prod;
+list<Pricebookentry> pbeList = new list<Pricebookentry>();
+for(Product2 pr: prod){
+PricebookEntry a = new PricebookEntry(Pricebook2Id = customPB.Id,IsActive = true,unitPrice=2,product2Id
+=pr.id);
+pbeList.add(a);
+}
+insert pbelist;
+==============================================================================================================================================
+
+ 
